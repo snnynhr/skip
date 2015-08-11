@@ -5,24 +5,36 @@
   "description": "Skip to the next song on your playlists from anywhere in Chrome.",
   "version": "0.0.0.1",
   "permissions": [
-  "tabs",
-	"activeTab",
-	"http://*/*",
-	"https://*/*"  ],
-  "content_scripts" : [
-  {
-    "matches": ["*://www.facebook.com/*", "*://www.facebook.com/"],
-    "js": ["util/jquery.min.js", "js/fbedit.js"],
-    "run_at": "document_end"
-  }
+    "tabs",
+    "activeTab",
+    "http://*/*",
+    "https://*/*",
+    "commands"
   ],
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
   "commands": {
-          "toggle-feature-foo": {
-            "suggested_key": {
-              "default": "Ctrl+Shift+5"
-            },
-            "description": "Toggle feature foo",
-            "global": true
-          }
-        }
+    "skip-forward": {
+      "suggested_key": {
+        "default": "Ctrl+Right"
+      },
+      "description": "Skip Forward",
+      "global": true
+    },
+    "skip-back": {
+      "suggested_key": {
+        "default": "Ctrl+Left"
+      },
+      "description": "Skip Back",
+      "global": true
+    },
+    "set-playlist": {
+      "suggested_key": {
+        "default": "Ctrl+Down"
+      },
+      "description": "Set Playlist Tab"
+    }
+  }
 }

@@ -1,2 +1,2 @@
-DEL fbbackgrounds.zip
-"C:\Program Files\7-Zip\7z.exe" a "fbbackgrounds.zip" build/
+DEL skip.zip
+"C:\Program Files\7-Zip\7z.exe" a "skip.zip" build/
