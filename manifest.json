@@ -36,5 +36,12 @@
       },
       "description": "Set Playlist Tab"
     }
-  }
+  },
+  "icons": {
+      "128": "icons/skip128.png",
+      "19": "icons/skip19.png",
+      "32": "icons/skip32.png",
+      "48": "icons/skip48.png",
+      "64": "icons/skip64.png"
+   }
 }

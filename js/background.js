@@ -1,10 +1,32 @@
 var id = null;
+
+function checkURLTab(tab) {
+    return tab == undefined ||
+        tab.url.indexOf('https://www.youtube.com/watch?v=') == -1;
+}
+
+function execScript(id, file, callback) {
+    chrome.tabs.executeScript(id, {
+        file: file
+    }, callback);
+}
+
+function checkValidUrl(id, arr) {
+    chrome.tabs.get(id, function(tab) {
+        if (tab.url.indexOf('https://www.youtube.com/watch?v=') == -1) {
+            executeScript(id, {
+                code: 'history.forward();'
+            }, null);
+        }
+    });
+}
+
 chrome.commands.onCommand.addListener(function(command) {
     console.log(command);
+    console.log(id);
     if (id != null) {
         chrome.tabs.get(id, function(tab) {
-            if (tab == undefined ||
-                tab.url.indexOf('https://www.youtube.com/watch?v=') == -1) {
+            if (checkURLTab(tab)) {
                 id = null;
             }
         });
@@ -15,15 +37,11 @@ chrome.commands.onCommand.addListener(function(command) {
                 url: 'https://www.youtube.com/watch?v=*'
             }, function(tabs) {
                 if (tabs.length > 0) {
-                    chrome.tabs.executeScript(tabs[0].id, {
-                        file: 'js/skip.js'
-                    }, null);
+                    execScript(tabs[0].id, 'js/skip-forward.js', null);
                 }
             });
         } else {
-            chrome.tabs.executeScript(id, {
-                file: 'js/skip.js'
-            }, null);
+            execScript(id, 'js/skip-forward.js', null);
         }
         console.log('skip-forward');
     } else if (command == 'skip-back') {
@@ -32,15 +50,27 @@ chrome.commands.onCommand.addListener(function(command) {
                 url: 'https://www.youtube.com/watch?v=*'
             }, function(tabs) {
                 if (tabs.length > 0) {
-                    chrome.tabs.executeScript(tabs[0].id, {
-                        code: 'history.back();'
-                    }, null);
+                    execScript(tabs[0].id, 'js/skip-back.js', function(arr) {
+                        chrome.tabs.get(tabs[0].id, function(tab) {
+                            if (tab.url.indexOf('https://www.youtube.com/watch?v=') == -1) {
+                                chrome.tabs.executeScript(id, {
+                                    code: 'history.forward();'
+                                }, null);
+                            }
+                        });
+                    });
                 }
             });
         } else {
-            chrome.tabs.executeScript(id, {
-                code: 'history.back();'
-            }, null);
+            execScript(id, 'js/skip-back.js', function(arr) {
+                chrome.tabs.get(id, function(tab) {
+                    if (tab.url.indexOf('https://www.youtube.com/watch?v=') == -1) {
+                        chrome.tabs.executeScript(id, {
+                            code: 'history.forward();'
+                        }, null);
+                    }
+                });
+            });
         }
         console.log('Skip back');
     } else if (command == 'set-playlist') {
