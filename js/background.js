@@ -85,3 +85,29 @@ chrome.commands.onCommand.addListener(function(command) {
     console.log('Unknown command');
   }
 });
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+    if (id != null) {
+      chrome.tabs.get(id, function(tab) {
+        if (checkURLTab(tab)) {
+          id = null;
+        }
+      });
+    }
+    if (id == null) {
+      chrome.tabs.query({
+        url: 'https://www.youtube.com/watch?v=*'
+      }, function(tabs) {
+        if (tabs.length > 0) {
+          execScript(tabs[0].id, 'js/skip-forward.js', null);
+        }
+      });
+    } else {
+      execScript(id, 'js/skip-forward.js', null);
+    }
+    chrome.browserAction.disable(id);
+    setTimeout(function() {
+        chrome.browserAction.enable(id);
+    }, 750);
+    console.log('skip-forward');
+});
